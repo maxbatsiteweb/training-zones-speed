@@ -1,151 +1,128 @@
 import streamlit as st
-import pandas as pd
-import math
-from pathlib import Path
 
-# Set the title and favicon that appear in the Browser's tab bar.
-st.set_page_config(
-    page_title='GDP dashboard',
-    page_icon=':earth_americas:', # This is an emoji shortcode. Could be a URL too.
-)
 
-# -----------------------------------------------------------------------------
-# Declare some useful functions.
+st.image("logo_petit_noir.png", width=150)
 
-@st.cache_data
-def get_gdp_data():
-    """Grab GDP data from a CSV file.
-
-    This uses caching to avoid having to read the file every time. If we were
-    reading from an HTTP endpoint instead of a file, it's a good idea to set
-    a maximum age to the cache with the TTL argument: @st.cache_data(ttl='1d')
+# CSS personnalisé
+st.markdown(
     """
+    <style>
 
-    # Instead of a CSV on disk, you could read from an HTTP endpoint here too.
-    DATA_FILENAME = Path(__file__).parent/'data/gdp_data.csv'
-    raw_gdp_df = pd.read_csv(DATA_FILENAME)
 
-    MIN_YEAR = 1960
-    MAX_YEAR = 2022
+    /* Masquer complètement le bandeau si nécessaire */
+    header {
+        visibility: hidden;
+    }
+    header > div {
+        display: none;
+    }
 
-    # The data above has columns like:
-    # - Country Name
-    # - Country Code
-    # - [Stuff I don't care about]
-    # - GDP for 1960
-    # - GDP for 1961
-    # - GDP for 1962
-    # - ...
-    # - GDP for 2022
-    #
-    # ...but I want this instead:
-    # - Country Name
-    # - Country Code
-    # - Year
-    # - GDP
-    #
-    # So let's pivot all those year-columns into two: Year and GDP
-    gdp_df = raw_gdp_df.melt(
-        ['Country Code'],
-        [str(x) for x in range(MIN_YEAR, MAX_YEAR + 1)],
-        'Year',
-        'GDP',
-    )
 
-    # Convert years from string to integers
-    gdp_df['Year'] = pd.to_numeric(gdp_df['Year'])
 
-    return gdp_df
+    /* Personnaliser les autres éléments si nécessaire */
+    /* Applique le style pour centrer le texte globalement */
+        .center-text {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            text-align: center;
+            font-size: 20px;
+        }
 
-gdp_df = get_gdp_data()
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+   
 
-# -----------------------------------------------------------------------------
-# Draw the actual page
-
-# Set the title that appears at the top of the page.
-'''
-# :earth_americas: GDP dashboard
-
-Browse GDP data from the [World Bank Open Data](https://data.worldbank.org/) website. As you'll
-notice, the data only goes to 2022 right now, and datapoints for certain years are often missing.
-But it's otherwise a great (and did I mention _free_?) source of data.
-'''
-
-# Add some spacing
-''
-''
-
-min_value = gdp_df['Year'].min()
-max_value = gdp_df['Year'].max()
-
-from_year, to_year = st.slider(
-    'Which years are you interested in?',
-    min_value=min_value,
-    max_value=max_value,
-    value=[min_value, max_value])
-
-countries = gdp_df['Country Code'].unique()
-
-if not len(countries):
-    st.warning("Select at least one country")
-
-selected_countries = st.multiselect(
-    'Which countries would you like to view?',
-    countries,
-    ['DEU', 'FRA', 'GBR', 'BRA', 'MEX', 'JPN'])
-
-''
-''
-''
-
-# Filter the data
-filtered_gdp_df = gdp_df[
-    (gdp_df['Country Code'].isin(selected_countries))
-    & (gdp_df['Year'] <= to_year)
-    & (from_year <= gdp_df['Year'])
-]
-
-st.header('GDP over time', divider='gray')
-
-''
-
-st.line_chart(
-    filtered_gdp_df,
-    x='Year',
-    y='GDP',
-    color='Country Code',
+    </style>
+    """,
+    unsafe_allow_html=True
 )
 
-''
-''
+st.header("Les zones d'entrainement.")
+
+st.text("Les zones d'entrainement sont calculées sur la base de la vitesse critique.")
+
+st.text("La vitesse critique est estimée sur la base de deux tests à intensité maximale sur 1200 mètres et 3600 mètres.")
+
+st.text("La vitesse critique délimite les domaines d'effort élevés et sévères. Au délà de cette vitesse, l'athlète tend vers sa cosommation d'oxygène maximale (VO2Max).")
+
+st.divider()
+
+st.text("Renseignez des temps sur des efforts maximales de 3 à 5 minutes et de 10 à 15 minutes.")
+
+st.divider()
 
 
-first_year = gdp_df[gdp_df['Year'] == from_year]
-last_year = gdp_df[gdp_df['Year'] == to_year]
 
-st.header(f'GDP in {to_year}', divider='gray')
+st.subheader("Test 3 à 5 minutes")
 
-''
+distance_1 = st.number_input("Distance (mètres)", min_value=0, max_value=10000, step=1)
 
-cols = st.columns(4)
+col1, col2 = st.columns(2)
 
-for i, country in enumerate(selected_countries):
-    col = cols[i % len(cols)]
+# Saisie des minutes dans la première colonne
+with col1:
+    minutes_1 = st.number_input("Minutes", min_value=0, max_value=59, step=1)
 
-    with col:
-        first_gdp = first_year[first_year['Country Code'] == country]['GDP'].iat[0] / 1000000000
-        last_gdp = last_year[last_year['Country Code'] == country]['GDP'].iat[0] / 1000000000
+# Saisie des secondes dans la deuxième colonne
+with col2:
+    secondes_1 = st.number_input("Secondes", min_value=0, max_value=59, step=1)
 
-        if math.isnan(first_gdp):
-            growth = 'n/a'
-            delta_color = 'off'
-        else:
-            growth = f'{last_gdp / first_gdp:,.2f}x'
-            delta_color = 'normal'
 
-        st.metric(
-            label=f'{country} GDP',
-            value=f'{last_gdp:,.0f}B',
-            delta=growth,
-            delta_color=delta_color
-        )
+st.subheader("Test 10 à 15 minutes")
+
+distance_2 = st.number_input("Distance (mètres)", min_value=0, max_value=10000, step=1)
+
+col1, col2 = st.columns(2)
+
+# Saisie des minutes dans la première colonne
+with col1:
+    minutes_2 = st.number_input("Minutes", min_value=0, max_value=59, step=1)
+
+# Saisie des secondes dans la deuxième colonne
+with col2:
+    secondes_2 = st.number_input("Secondes", min_value=0, max_value=59, step=1)
+
+time_1 = minutes_1 * 60 + secondes_1
+time_2 = minutes_2 * 60 + secondes_2
+
+speed_1 = time_1/ distance_1
+speed_2 = time_2 / distance_2
+
+
+
+st.divider()
+
+st.subheader("Vitesse critique")
+
+cs = distance_1 / (time_1 + (time_2 - (distance_2/distance_1)*time_1)/(distance_2/distance_1 - 1))
+
+# convert speed m/s en allure mm:ss par km
+def calculate_pace(total_seconds, distance_meters):
+        pace_seconds_per_km = total_seconds / (distance_meters / 1000)
+        minutes, seconds = divmod(pace_seconds_per_km, 60)
+        return f"{int(minutes)} min {int(seconds):02d} s / km"
+
+st.write(f"Vitesse critique: {calculate_pace(1, cs)}")
+
+
+
+zone1_max = round(0.75 * cs)
+zone2_max = round(0.85 * cs)
+zone3_max = round(0.93 * cs)
+zone4_max = round(1* cs)
+
+st.subheader("Zones 1")
+st.write(f"{0} - {zone1_max}")
+
+st.subheader("Zones 2")
+st.write(f"{zone1_max} - {zone2_max}")
+
+st.subheader("Zones 3")
+st.write(f"{zone2_max} - {zone3_max}")
+
+st.subheader("Zones 4")
+st.write(f"{zone3_max} - {zone4_max}")
+
+st.subheader("Zones 5")
+st.write(f"{zone4_max} - et plus")
