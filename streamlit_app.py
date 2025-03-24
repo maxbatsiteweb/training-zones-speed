@@ -56,17 +56,17 @@ st.divider()
 
 st.subheader("Test 3 à 5 minutes")
 
-distance_1 = st.number_input("Distance (mètres)", min_value=0, max_value=10000, step=1)
+distance_1 = st.number_input("Distance (mètres) ", min_value=0, max_value=10000, step=1)
 
 col1, col2 = st.columns(2)
 
 # Saisie des minutes dans la première colonne
 with col1:
-    minutes_1 = st.number_input("Minutes", min_value=0, max_value=59, step=1)
+    minutes_1 = st.number_input("Minutes ", min_value=0, max_value=59, step=1)
 
 # Saisie des secondes dans la deuxième colonne
 with col2:
-    secondes_1 = st.number_input("Secondes", min_value=0, max_value=59, step=1)
+    secondes_1 = st.number_input("Secondes ", min_value=0, max_value=59, step=1)
 
 
 st.subheader("Test 10 à 15 minutes")
