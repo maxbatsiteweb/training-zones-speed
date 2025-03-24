@@ -38,7 +38,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.header("Les zones d'entrainement.")
+st.header("Les zones d'entrainement")
 
 st.text("Les zones d'entrainement sont calculées sur la base de la vitesse critique.")
 
