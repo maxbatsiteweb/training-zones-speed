@@ -95,7 +95,7 @@ st.divider()
 st.subheader("Vitesse critique")
 
 if distance_1 == 0 or distance_2 == 0 or time_1 == 0 or time_2 == 0:
-     st.warning("Les distances et le temps ne peuvent être nuls")
+     st.warning("Les distances et les temps ne peuvent être nuls")
 else:
 
     cs = distance_1 / (time_1 + (time_2 - (distance_2/distance_1)*time_1)/(distance_2/distance_1 - 1))
@@ -110,10 +110,10 @@ else:
 
 
 
-    zone1_max = round(0.75 * cs)
-    zone2_max = round(0.85 * cs)
-    zone3_max = round(0.93 * cs)
-    zone4_max = round(1* cs)
+    zone1_max = calculate_pace(1, 0.75 * cs)
+    zone2_max = calculate_pace(1, 0.85 * cs)
+    zone3_max = calculate_pace(1, 0.93 * cs)
+    zone4_max = calculate_pace(1, 1 * cs)
 
     st.subheader("Zones 1")
     st.write(f"{0} - {zone1_max}")
