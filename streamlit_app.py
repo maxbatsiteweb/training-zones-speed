@@ -42,7 +42,7 @@ st.header("Les zones d'entrainement")
 
 st.text("Les zones d'entrainement sont calculées sur la base de la vitesse critique.")
 
-st.text("La vitesse critique est estimée sur la base de deux tests à intensités maximales sur 1200 mètres et 3600 mètres.")
+st.text("La vitesse critique est estimée via deux tests à intensités maximales sur 1200 mètres et 3600 mètres.")
 
 st.text("La vitesse critique délimite les domaines d'effort élevés et sévères. Au délà de cette vitesse, l'athlète tend vers sa cosommation d'oxygène maximale (VO2Max).")
 
