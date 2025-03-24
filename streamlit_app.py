@@ -95,7 +95,7 @@ st.divider()
 st.subheader("Vitesse critique")
 
 if distance_1 == 0 or distance_2 == 0 or time_1 == 0 or time_2 == 0:
-     st.warnings("Les distances et le temps ne peuvent être nuls")
+     st.warning("Les distances et le temps ne peuvent être nuls")
 else:
 
     cs = distance_1 / (time_1 + (time_2 - (distance_2/distance_1)*time_1)/(distance_2/distance_1 - 1))
